@@ -6,23 +6,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Util {
-    public static final String NAMEUSER = "root";
-    public static final String PASSWORD = "Qwerty-123";
-    public static final String URL = "jdbc:mysql://localhost:3306/test1";
-    public static Connection connection;
-    public static Statement statement;
-    public void Connection() {
-        String url = "jdbc:mysql://localhost:3306/test1";
-        String username = "root";
-        String password = "Qwerty-123";
-
+    private static final String NAMEUSER = "root";
+    private static final String PASSWORD = "Qwerty-123";
+    private static final String URL = "jdbc:mysql://localhost:3306/test1";
+    private static Connection connection;
+    private Statement statement;
+    public Statement Connection() {
         try {
-            connection = DriverManager.getConnection(url, username, password);
+            connection = DriverManager.getConnection(URL, NAMEUSER, PASSWORD);
             statement = connection.createStatement();
         } catch (SQLException e ) {
             System.out.println("Connection failed!");
             e.printStackTrace();
         }
+        return statement;
     }
 
 
