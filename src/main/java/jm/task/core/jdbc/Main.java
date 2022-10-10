@@ -21,7 +21,9 @@ public class Main {
         userService.saveUser("Anton", "Antonov", (byte)67);
 
         //Получение всех User из базы и вывод в консоль
-        System.out.println(userService.getAllUsers().toString());
+        for (int i = 0; i < userService.getAllUsers().size(); i++) {
+            System.out.println(userService.getAllUsers().get(i).toString());
+        }
 
         //Очистка таблицы User(ов)
         userService.cleanUsersTable();
