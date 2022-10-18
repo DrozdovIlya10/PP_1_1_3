@@ -11,34 +11,42 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
     public UserDaoJDBCImpl() {
 
     }
+    PreparedStatement preparedStatement;
     public void createUsersTable()  {
 
-        try (PreparedStatement statement = Connect()) {
-            statement.executeUpdate("DROP TABLE IF EXISTS `user`;");
-            statement.executeUpdate("CREATE TABLE user (\n" +
+        try (Connection connection = getConnection()) {
+
+            preparedStatement = connection.prepareStatement ("DROP TABLE IF EXISTS `user`;");
+
+            preparedStatement = connection.prepareStatement("CREATE TABLE user (\n" +
                     "    id INT PRIMARY KEY AUTO_INCREMENT,\n" +
                     "    name VARCHAR(255) NOT NULL,\n" +
                     "    lastname VARCHAR(255) NOT NULL,\n" +
                     "    age INT NOT NULL\n" +
                     ");"
             );
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Ошибка при создании таблицы");
         }
     }
 
     public void dropUsersTable()  {
-        try(PreparedStatement statement = Connect()) {
-            statement.executeUpdate("DROP TABLE IF EXISTS `user`;");
+        try(Connection connection = getConnection()) {
+
+            preparedStatement = connection.prepareStatement ("DROP TABLE IF EXISTS `user`;");
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Ошибка при удалении таблицы");
         }
     }
 
     public void saveUser(String name, String lastName, byte age)  {
-        try(PreparedStatement statement = Connect()) {
-            statement.executeUpdate("INSERT INTO user (name,lastname,age) VALUES ('"
+        try(Connection connection = getConnection()) {
+
+            preparedStatement = connection.prepareStatement ("INSERT INTO user (name,lastname,age) VALUES ('"
                     + name + "', '"+ lastName +"', '"+ age+ "' )");
+            preparedStatement.executeUpdate();
             System.out.println("User c именем - "+ name + " добавлени в базу данных");
         } catch (SQLException e) {
             System.out.println("Ошибка при сохранении пользователя");
@@ -46,8 +54,10 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
     }
 
     public void removeUserById(long id) {
-        try(PreparedStatement statement = Connect()) {
-            statement.executeUpdate( "DELETE FROM user WHERE id = " + id + ";");
+        try(Connection connection = getConnection()) {
+
+            preparedStatement = connection.prepareStatement ( "DELETE FROM user WHERE id = " + id + ";");
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Ошибка при удалении пользователя");
         }
@@ -55,8 +65,9 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();
-        try (PreparedStatement statement = Connect();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM user")) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM user");
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 User user = new User(resultSet.getString(2),
                         resultSet.getString(3),
@@ -70,8 +81,10 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
     }
 
     public void cleanUsersTable() {
-        try (PreparedStatement statement = Connect()) {
-            statement.executeUpdate("TRUNCATE TABLE user;");
+        try (Connection connection = getConnection()) {
+            PreparedStatement preparedStatement;
+            preparedStatement = connection.prepareStatement ("TRUNCATE TABLE user;");
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Ошибка при очистке таблицы user");
         }
